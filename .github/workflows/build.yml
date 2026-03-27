@@ -1,11 +1,5 @@
 name: NodeJS with jest test
 
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
-
 on:
   workflow_dispatch: 
 
@@ -25,20 +19,18 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Step นี้จริงๆ แล้วไม่มีผลกับ Step อื่น แต่ใส่ไว้ตามโครงสร้างเดิมของคุณครับ
     - name: ChangeFolder
       run: cd jestway
       
     - name: Build
       run: |
         cd jestway
+        # ใช้ npm install ธรรมดา เพื่อให้ได้ library ตามที่คุณตั้งค่าไว้ (^29.7.0)
         npm install
-        npm audit fix --force
-        # แก้ปัญหา Permission Denied โดยการให้สิทธิ์รันกับไฟล์ binary ของ jest
+        # แก้ปัญหา Permission Denied สำหรับ Jest
         chmod +x node_modules/.bin/jest
 
     - name: Test
       run: |
         cd jestway
-        # ใช้ npm test เพื่อรัน script ที่เขียนไว้ใน package.json
         npm test
