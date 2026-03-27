@@ -1,45 +1,10 @@
-# name: NodeJS with jest test
-
-# #on:
-# #  push:
-# #    branches: [ "main" ]
-# #  pull_request:
-# #    branches: [ "main" ]
+name: NodeJS with jest test
 
 # on:
-#   workflow_dispatch: 
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     strategy:
-#       matrix:
-#         node-version: [24.x]
-        
-#     steps:
-#     - uses: actions/checkout@v4
-
-#     - name: Use Node.js ${{ matrix.node-version }}
-#       uses: actions/setup-node@v4
-#       with:
-#         node-version: ${{ matrix.node-version }}
-
-#     - name: ChangeFolder
-#       run: cd jestway
-      
-#     - name: Build
-#       run: |
-#         cd jestway
-#         npm install
-#         npm audit fix --force
-
-#     - name: Test
-#       run: |
-#         cd jestway
-#         npm run test
-
-name: NodeJS with jest test
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
 
 on:
   workflow_dispatch: 
@@ -48,30 +13,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # กำหนดให้ทุกคำสั่ง 'run' ทำงานในโฟลเดอร์ jestway โดยอัตโนมัติ
-    defaults:
-      run:
-        working-directory: ./jestway
-
     strategy:
       matrix:
         node-version: [24.x]
-
+        
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Install dependencies
+    # Step นี้จริงๆ แล้วไม่มีผลกับ Step อื่น แต่ใส่ไว้ตามโครงสร้างเดิมของคุณครับ
+    - name: ChangeFolder
+      run: cd jestway
+      
+    - name: Build
       run: |
+        cd jestway
         npm install
         npm audit fix --force
+        # แก้ปัญหา Permission Denied โดยการให้สิทธิ์รันกับไฟล์ binary ของ jest
+        chmod +x node_modules/.bin/jest
 
-    - name: Run Test
-      # ใช้ npx เพื่อช่วยรัน jest ป้องกันปัญหาเรื่อง permission ของไฟล์ binary
-      run: npx jest
-        
+    - name: Test
+      run: |
+        cd jestway
+        # ใช้ npm test เพื่อรัน script ที่เขียนไว้ใน package.json
+        npm test
