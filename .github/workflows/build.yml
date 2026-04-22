@@ -1,0 +1,36 @@
+name: NodeJS with jest test
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [24.x]
+        
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: ChangeFolder
+      run: cd jestway
+      
+    - name: Build
+      run: |
+        cd jestway
+        # à¹ƒà¸Šà¹‰ npm install à¸˜à¸£à¸£à¸¡à¸”à¸² à¹€à¸žà¸·à¹ˆà¸­à¹ƒà¸«à¹‰à¹„à¸”à¹‰ library à¸•à¸²à¸¡à¸—à¸µà¹ˆà¸„à¸¸à¸“à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¹„à¸§à¹‰ (^29.7.0)
+        npm install
+        # à¹à¸à¹‰à¸›à¸±à¸à¸«à¸² Permission Denied à¸ªà¸³à¸«à¸£à¸±à¸š Jest
+        chmod +x node_modules/.bin/jest
+
+    - name: Test
+      run: |
+        cd jestway
+        npm test
